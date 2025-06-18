@@ -1,18 +1,23 @@
+# train_model.py
 import pandas as pd
-import statsmodels.formula.api as smf
+from sklearn.linear_model import LinearRegression
 import joblib
 
-# 1. Load the data
+# 1. Load data
 df = pd.read_csv('doggy-boot-harness.csv')
 
-# 2. Fit a linear regression: boot_size ~ harness_size
-model = smf.ols('boot_size ~ harness_size', data=df).fit()
+# 2. Prepare X and y
+X = df[['harness_size']].values   # shape (n_samples, 1)
+y = df['boot_size'].values        # shape (n_samples,)
 
-# 3. Print model metrics
-print("Model R²:", model.rsquared)
-print("Slope:", model.params['harness_size'])
-print("Intercept:", model.params['Intercept'])
+# 3. Train model
+model = LinearRegression().fit(X, y)
 
-# 4. Save the trained model
+# 4. Print metrics
+print("Model R\u00b2:", model.score(X, y))
+print("Slope:", model.coef_[0])
+print("Intercept:", model.intercept_)
+
+# 5. Save the model
 joblib.dump(model, 'boot_model.pkl')
 print("Saved model to boot_model.pkl")
